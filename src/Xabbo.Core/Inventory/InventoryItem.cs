@@ -1,6 +1,6 @@
 ﻿using System;
-
 using Xabbo.Messages;
+using Xabbo.Messages.Flash;
 
 namespace Xabbo.Core;
 
@@ -66,6 +66,12 @@ public sealed class InventoryItem : IInventoryItem, IParserComposer<InventoryIte
     {
         ItemId = p.ReadId();
 
+        // Habbo is incoming this value only FurniListAddOrUpdate message
+        if (p.Context!.Messages.Is(p.Header, In.FurniListAddOrUpdate) && p.Client is ClientType.Flash)
+        {
+            _ = p.ReadInt();
+        }
+        
         if (p.Client is ClientType.Flash)
         {
             Type = H.ToItemType(p.ReadString());
